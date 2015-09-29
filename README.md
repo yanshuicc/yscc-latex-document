@@ -1,0 +1,1 @@
+# yscc-latex-document
