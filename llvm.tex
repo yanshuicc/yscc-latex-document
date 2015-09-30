@@ -1,0 +1,1504 @@
+\documentclass{ctexart}
+\usepackage{listings}
+\usepackage{chngpage}
+\usepackage{xcolor}
+
+\begin{document}
+\tableofcontents
+\newpage
+\lstset{
+	language=C++,		
+	numbers=left, 
+	basicstyle=\fontsize{10pt}{5pt}\selectfont ,
+	%stepnumber=2, 
+	tabsize=2,                    	%tab两空格
+	%numberstyle=\tiny,
+	keywordstyle=\color{red!70},
+	commentstyle=\color{blue!70}\fontsize{9pt}{5pt}\selectfont ,	
+	frame=shadowbox, 
+	%frame=leftline,	
+	rulesepcolor=\color{red!20!green!20!blue!20},
+	escapeinside=``,					%逃逸文字
+	%xleftmargin=2em,			
+	%xrightmargin=2em, 				
+	aboveskip=1em,
+	breaklines=true,               % 自动断行
+	extendedchars=false,				%代码跨页
+}
+
+\section{Dwraf}
+
+Dwraf(Debugging With Attributed Record Formats)字面直译过来是属性化记录格式调试，是调试信息的一种标准格式。下面介绍几个相关的文件及其中类的结构关系。\\
+（默认“.”为llvm项目的源码根目录）\\
+
+\fbox{
+	\parbox{\textwidth}{
+		./include/llvm/Support
+
+		\begin{adjustwidth}{5em}{0em}
+			Dwarf.h\\
+		\end{adjustwidth}
+
+		./include/llvm/CodeGen
+		\begin{adjustwidth}{5em}{0em}
+			DIE.h\\
+		\end{adjustwidth}
+
+		./lib/CodeGen/AsmPrinter
+		\begin{adjustwidth}{5em}{0em}
+		    AddressPoll.h\\
+			DwarfAccelTable.h\\
+			DwarfCompileUnit.h\\
+			DwarfDebug.h\\
+			DwarfException.h\\
+			DwarfExpression.h\\
+			DwarfFile.h\\
+			DwarfStringPool.h\\
+			DwarfUnit.h\\
+			EHStreamer.h\\
+		\end{adjustwidth}
+	}
+}
+
+%\rule{80ex}{0.1ex}
+
+
+\subsection{Dwarf.h}
+Dwarf.h(./include/include/Support/Dwarf.h)中定义了相关的标识常量。具体的标准文档可以从http://www.dwarfstd.org.下载。\par
+
+Dwarf.h文件中定义了大量的枚举常量，将调试程序信息的相关操作对应到一个常数(码)，包括(括号内简单说明枚举声明的意思和部分枚举成员)
+
+\fbox{
+	\parbox{\textwidth}{
+		enum:
+		\begin{adjustwidth}{5em}{0em}
+			Tag(uint16\_t标签:array\_type、class\_type...)\\
+			Attribute(uint16\_t属性:sibling、location、name、ordering)\\
+			Form(uint16\_t属性格式码:addr、block2、block4...)\\
+			LocationAtom(操作码:addr、deref、dup、drop、div...)\\
+			TypeKind(属值码:address、boolean、complex\_ float、float...)\\
+			DecimalSignEncoding(十进制符号码) \\
+			EndianityEncoding(结束符码)\\
+			AccessAttribute(访问属性:public、protected、private)\\
+			VisibilityAttribute(可访问属性)\\
+			VirtualityAttribute(虚属性)\\
+			SourceLanguage(代码语言:c89、c、ada83...)\\
+			CaseSensitivity(大小写敏感)\\
+			CallingConvention(调用约定:normal、program、nocall、lo\_user、hi\_user)\\
+			InlineAttribute(内联属性)\\
+			ArrayDimensionOrdering(数组维:row、col)\\
+			DiscriminantList(判别表:lable、range)\\
+			LineNumberOps(行号操作码:extended\_op、copy、advance\_pc、advance\_line )\\
+			LineNumberExtendedOps(行号扩展操作:end\_sequence、set\_address、define\_file...)\\
+			MacinfoRecordType(宏类型码:define、undef、start\_file...)\\
+			CallFrameInfo(调用框架指令码:extended、nop、advance...)\\
+			Constants(常量:no、yes、absptr、omit...)\\
+			LocationListEntry()\\
+			ApplePropertyAttributes(object-c属性:readonly、getter、assign...)\\
+			AcceleratorTable()\\
+			GDBIndexEntryKind()\\
+			GDBIndexEntryLinkage()\\
+		\end{adjustwidth}
+	}
+}
+
+
+
+
+\subsection{DIE.h}
+DIE(debug information entry)是调试信息入口的意思。是Dwarf存储程序中变量函数信息的类。
+DIE.h(./include/llvm/CodeGen)的头文件中14个相关的类。后面几个类是基本相同的结构，都是从DIEValue中继承出来的。
+
+\fbox{
+	\parbox{\textwidth}{
+		class
+		\begin{adjustwidth}{5em}{0em}
+			DIEAbbrevData [llvm]\\
+			DIEAbbrev [llvm]\\
+			DIE [llvm]\\
+			DIEValue [llvm]\\
+			DIEInteger [llvm]\\
+			DIEExpr [llvm]\\
+			DIELabel [llvm]\\
+			DIEDelta [llvm]\\
+			DIEString [llvm]\\
+			DIEEntry [llvm]\\
+			DIETypeSignature [llvm]\\
+			DIELoc [llvm]\\
+			DIEBlock [llvm]\\
+			DIELocList [llvm]\\
+		\end{adjustwidth}	
+	}
+}
+
+这14个类的成员函数多是对成员变量的操作，而成员变量则是前面介绍的Dwarf.h中声明的枚举类型，下面列出这14个类中的成员变量，简单说明这些类之间的嵌套关系。
+
+\subsubsection{DIEAbbrevData.class}
+DIEAbbrevData是被DIEAbbrev中Data的SmallVector的类型。
+\begin{lstlisting}[language=c++]
+class DIEAbbrevData {
+  /// Attribute - Dwarf attribute code.
+  /// 属性码 - Dwarf.h文件中声明的枚举16位uint16\_t
+  dwarf::Attribute Attribute;
+
+  /// Form - Dwarf form code.
+  /// 格式码  Dwarf.h文件中声明的枚举16位uint16\_t
+  dwarf::Form Form;
+  ...
+}
+\end{lstlisting}
+
+\subsubsection{DIEAbbrev.class}
+\begin{lstlisting}[language=c++]
+class DIEAbbrev : public FoldingSetNode {
+  /// Unique number for node.
+  /// 唯一节点数字
+  unsigned Number;
+
+  /// Tag - Dwarf tag code.
+  ///dwarf标签码
+  dwarf::Tag Tag;
+
+  /// Children - Whether or not this node has children.
+  /// 是否有子节点
+  // This cheats a bit in all of the uses since the values in the standard
+  // are 0 and 1 for no children and children respectively.
+  bool Children;
+
+  /// Data - Raw data bytes for abbreviation.
+  /// 申请了12个DIEAbbrevData空间的Data
+  SmallVector<DIEAbbrevData, 12> Data;
+  ...
+ }
+\end{lstlisting}
+
+\subsubsection{DIE.class}
+DIE是调试信息入口的主类，包括各种调试信息和子DIE，及父DIE指针。函数成员包括获取设置这些信息值，和添加Value和child。
+\begin{lstlisting}[language=c++]
+class DIE {
+protected:
+  /// Offset - Offset in debug info section.
+  /// 偏移量 调试信息段偏移量
+  unsigned Offset;
+
+  /// Size - Size of instance + children.
+  /// 自己+子DIE的总共大小
+  unsigned Size;
+
+  /// Abbrev - Buffer for constructing abbreviation.
+  /// 缩写
+  DIEAbbrev Abbrev;
+
+  /// Children DIEs.
+  /// 子DIE
+  // This can't be a vector<DIE> because pointer validity is requirent for the
+  // Parent pointer and DIEEntry.
+  // It can't be a list<DIE> because some clients need pointer validity before
+  // the object has been added to any child list
+  // (eg: DwarfUnit::constructVariableDIE). These aren't insurmountable, but may
+  // be more convoluted than beneficial.
+  std::vector<std::unique_ptr<DIE>> Children;
+
+  DIE *Parent;
+
+  /// Attribute values.
+  /// 属性值
+  SmallVector<DIEValue *, 12> Values;
+  ...
+}
+\end{lstlisting}
+
+\subsubsection{DIEValue.class}
+DIEValue是基本的值类，成员变量仅声明了类型，成员函数限于获取类型，虚函数声明了查值和类型的大小。
+\begin{lstlisting}[language=c++]
+class DIEValue {
+...
+protected:
+  /// Ty - Type of data stored in the value.
+  /// 类型
+  Type Ty;
+  ...
+}
+\end{lstlisting}
+
+
+DIEValue中的Type是类中声明枚举。
+\begin{lstlisting}[language=c++]
+class DIEValue {
+  enum Type {
+    isInteger,
+    isString,
+    isExpr,
+    isLabel,
+    isDelta,
+    isEntry,
+    isTypeSignature,
+    isBlock,
+    isLoc,
+    isLocList,
+  };
+  ...
+}
+\end{lstlisting}
+
+继承自DIEValue的DIEInteger，多了个64位的Integer。函数成员多了BestForm（选择最好的int格式）、GetValue（返回Integer的数值）、classof(返回DIEValue中枚举的int)
+\subsubsection{DIEInteger.class}
+\begin{lstlisting}[language=c++]
+class DIEInteger : public DIEValue {
+  uint64_t Integer;
+  ...
+}
+\end{lstlisting}
+
+DIEExpr基本同DIEInteger，只是是针对的表达式的类。
+\subsubsection{DIEExpr.class}
+\begin{lstlisting}[language=c++]
+class DIEExpr : public DIEValue {
+  const MCExpr *Expr;
+  ...
+}
+\end{lstlisting}
+
+DIELabel同上，针对于label(MCSymbol ./include/llvm/MC)
+\subsubsection{DIELabel.class}
+\begin{lstlisting}[language=c++]
+class DIELabel : public DIEValue {
+  const MCSymbol *Label;
+  ...
+}
+\end{lstlisting}
+
+DIEDelta同上，针对Delta(增量，所以有两个label)
+\subsubsection{DIEDelta.class}
+\begin{lstlisting}[language=c++]
+class DIEDelta : public DIEValue {
+  const MCSymbol *LabelHi;
+  const MCSymbol *LabelLo;
+  ...
+}
+\end{lstlisting}
+
+\subsubsection{DIEString.class}
+\begin{lstlisting}[language=c++]
+class DIEString : public DIEValue {
+  const DIEValue *Access;
+  StringRef Str;
+  ...
+}
+\end{lstlisting}
+
+\subsubsection{DIEEntry.class}
+\begin{lstlisting}[language=c++]
+class DIEEntry : public DIEValue {
+  DIE &Entry;
+  ...
+}
+\end{lstlisting}
+
+
+\subsubsection{DIETypeSignature.class}
+\begin{lstlisting}[language=c++]
+class DIETypeSignature : public DIEValue {
+  const DwarfTypeUnit &Unit;
+  ...
+}
+\end{lstlisting}
+
+
+
+\subsubsection{DIELoc.class}
+\begin{lstlisting}[language=c++]
+class DIELoc : public DIEValue, public DIE {
+  ...
+}
+\end{lstlisting}
+
+
+\subsubsection{DIEBlock.class}
+\begin{lstlisting}[language=c++]
+class DIEBlock : public DIEValue, public DIE {
+  mutable unsigned Size; // Size in bytes excluding size header.
+  ...
+}
+\end{lstlisting}
+
+
+\subsubsection{DIELocList.class}
+\begin{lstlisting}[language=c++]
+class DIELocList : public DIEValue {
+  // Index into the .debug_loc vector.
+  size_t Index;
+  ...
+}
+\end{lstlisting}
+
+\newpage
+
+
+
+
+
+\subsection{AddressPool.h}
+AddressPool(地址池)成员变量为DenseMap<MCsymbol,地址入口>和一个是否使用的bool。
+MCsymbol.h(./include/llvm/MC/)中定义了MCsymbol类。
+地址入口则是类里面声明的结构体AddressPoolEntry。
+
+\subsubsection{AddressPool.class}
+\begin{lstlisting}[language=c++]
+class AddressPool {
+  struct AddressPoolEntry {
+    unsigned Number;
+    bool TLS;
+    ...
+  };
+  DenseMap<const MCSymbol *, AddressPoolEntry> Pool;
+
+  /// Record whether the AddressPool has been queried for an address index since
+  /// the last "resetUsedFlag" call. Used to implement type unit fallback - a
+  /// type that references addresses cannot be placed in a type unit when using
+  /// fission.
+  bool HasBeenUsed;
+  ...
+}
+\end{lstlisting}
+
+\subsection{DwarfAccelTable.h}
+
+Dwarf加速表，是一种间接的哈希表优化，格式包括：
+\\
+HEADER      BUCKETS   HASHES      OFFSETS     DATA
+\\
+都是DwarfAccelTable的class成员。
+
+\fbox{
+	\parbox{\textwidth}{
+		class
+		\begin{adjustwidth}{5em}{0em}
+		DwarfAccelTable [llvm]\\
+		\end{adjustwidth}
+	}
+}
+
+header有编号，版本号、hash函数的类型，buckets数目，hash的总数，data的结构，结构体长度。
+\subsubsection{TableHeader.struct}
+\begin{lstlisting}[language=c++]
+struct TableHeader {
+	/* 'HASH' magic value to allow endian detection*/
+	uint32_ t magic; 
+	/* Version number.*/
+	uint16_ t version; 
+	/* The hash function enumeration that was used.*/
+	uint16_ t hash_function; 
+	/* The number of buckets in this hash table.*/
+	uint32_ t bucket_count; 
+	/* The total number of unique hash values
+	and hash data offsets in this table.  */
+	uint32_ t hashes_count; 
+	/* The bytes to skip to get to the hash
+	indexes (buckets) for correct alignment.*/
+	uint32_ t header_data_len; 
+	...
+\}
+\end{lstlisting}
+
+\subsubsection{Atom.struct}
+\begin{lstlisting}[language=C++]
+struct Atom {
+	uint16_ t type; // enum AtomType
+	uint16_ t form; // DWARF DW_FORM_defines
+	...
+\};
+\end{lstlisting}
+
+\subsubsection{TableHeaderData.struct}
+\begin{lstlisting}[language=C++]
+struct TableHeaderData {
+	uint32_ t die_ offset_ base;
+	SmallVector<Atom, 3> Atoms;
+	...
+}
+\end{lstlisting}
+
+\subsubsection{HashDataContents.struct}
+\begin{lstlisting}[language=C++]
+struct HashDataContents {
+	const DIE *Die;   // Offsets
+	char Flags; // Specific flags to output
+	...
+}
+\end{lstlisting}
+
+\subsubsection{DataArray.struct}
+\begin{lstlisting}[language=C++]
+struct DataArray {
+	MCSymbol *StrSym;
+	std::vector<HashDataContents *> Values;
+	...
+}
+\end{lstlisting}
+
+\subsubsection{HashData.struct}
+\begin{lstlisting}[language=C++]
+struct HashData {
+	StringRef Str;
+	uint32_ t HashValue;
+	MCSymbol *Sym;
+	DwarfAccelTable::DataArray &Data; // offsets
+	...
+}
+\end{lstlisting}
+
+
+
+
+\subsection{DwarfCompileUnit.h}
+
+\fbox{
+	\parbox{\textwidth}{
+		class
+		\begin{adjustwidth}{5em}{0em}
+			DwarfCompileUnit [llvm]\\
+		\end{adjustwidth}
+	}
+}
+
+
+\subsubsection{DwarfCompileUnit.class}
+\begin{lstlisting}[language=C++]
+class DwarfCompileUnit : public DwarfUnit {
+  /// The attribute index of DW_AT_stmt_list in the compile unit DIE, avoiding
+  /// the need to search for it in applyStmtList.
+  unsigned stmtListIndex;
+
+  /// Skeleton unit associated with this unit.
+  DwarfCompileUnit *Skeleton;
+
+  /// A label at the start of the non-dwo section related to this unit.
+  MCSymbol *SectionSym;
+
+  /// The start of the unit within its section.
+  MCSymbol *LabelBegin;
+
+  /// GlobalNames - A map of globally visible named entities for this unit.
+  StringMap<const DIE *> GlobalNames;
+
+  /// GlobalTypes - A map of globally visible types for this unit.
+  StringMap<const DIE *> GlobalTypes;
+
+  // List of range lists for a given compile unit, separate from the ranges for
+  // the CU itself.
+  SmallVector<RangeSpanList, 1> CURangeLists;
+
+  // List of ranges for a given compile unit.
+  SmallVector<RangeSpan, 2> CURanges;
+
+  // The base address of this unit, if any. Used for relative references in
+  // ranges/locs.
+  const MCSymbol *BaseAddress;
+  ...
+}
+\end{lstlisting}
+
+\subsection{DwarfDebug.h}
+
+\fbox{
+	\parbox{\textwidth}{
+		class
+		\begin{adjustwidth}{5em}{0em}
+		SrcLineInfo [llvm]\\
+		DbgVariable [llvm]\\
+		DwarfDebug [llvm]\\
+		\end{adjustwidth}
+		}
+}
+
+
+\subsubsection{SrcLineInfo.class}
+\begin{lstlisting}[language=C++]
+/// \brief This class is used to record source line correspondence.
+class SrcLineInfo {
+  unsigned Line;     // Source line number.
+  unsigned Column;   // Source column.
+  unsigned SourceID; // Source ID number.
+  MCSymbol *Label;   // Label in code ID number.
+  ...
+}
+\end{lstlisting}
+
+
+\subsubsection{DbgVariable.class}
+\begin{lstlisting}[language=C++]
+/// \brief This class is used to track local variable information.
+class DbgVariable {
+  DIVariable Var;             // Variable Descriptor.
+  DIExpression Expr;          // Complex address location expression.
+  DIE *TheDIE;                // Variable DIE.
+  unsigned DotDebugLocOffset; // Offset in DotDebugLocEntries.
+  const MachineInstr *MInsn;  // DBG_VALUE instruction of the variable.
+  int FrameIndex;
+  DwarfDebug *DD;
+  ...
+}
+\end{lstlisting}
+
+
+\subsubsection{DwarfDebug.class}
+\begin{lstlisting}[language=C++]
+/// \brief Collects and handles dwarf debug information.
+class DwarfDebug : public AsmPrinterHandler {
+  // Target of Dwarf emission.
+  AsmPrinter *Asm;
+
+  // Collected machine module information.
+  MachineModuleInfo *MMI;
+
+  // All DIEValues are allocated through this allocator.
+  BumpPtrAllocator DIEValueAllocator;
+
+  // Maps MDNode with its corresponding DwarfCompileUnit.
+  MapVector<const MDNode *, DwarfCompileUnit *> CUMap;
+
+  // Maps subprogram MDNode with its corresponding DwarfCompileUnit.
+  MapVector<const MDNode *, DwarfCompileUnit *> SPMap;
+
+  // Maps a CU DIE with its corresponding DwarfCompileUnit.
+  DenseMap<const DIE *, DwarfCompileUnit *> CUDieMap;
+
+  // List of all labels used in aranges generation.
+  std::vector<SymbolCU> ArangeLabels;
+
+  // Size of each symbol emitted (for those symbols that have a specific size).
+  DenseMap<const MCSymbol *, uint64_t> SymSize;
+
+  // Provides a unique id per text section.
+  typedef DenseMap<const MCSection *, SmallVector<SymbolCU, 8> > SectionMapType;
+  SectionMapType SectionMap;
+
+  LexicalScopes LScopes;
+
+  // Collection of abstract variables.
+  DenseMap<const MDNode *, std::unique_ptr<DbgVariable>> AbstractVariables;
+  SmallVector<std::unique_ptr<DbgVariable>, 64> ConcreteVariables;
+
+  // Collection of DebugLocEntry. Stored in a linked list so that DIELocLists
+  // can refer to them in spite of insertions into this list.
+  SmallVector<DebugLocList, 4> DotDebugLocEntries;
+
+  // This is a collection of subprogram MDNodes that are processed to
+  // create DIEs.
+  SmallPtrSet<const MDNode *, 16> ProcessedSPNodes;
+
+  // Maps instruction with label emitted before instruction.
+  DenseMap<const MachineInstr *, MCSymbol *> LabelsBeforeInsn;
+
+  // Maps instruction with label emitted after instruction.
+  DenseMap<const MachineInstr *, MCSymbol *> LabelsAfterInsn;
+
+  // History of DBG_VALUE and clobber instructions for each user variable.
+  // Variables are listed in order of appearance.
+  DbgValueHistoryMap DbgValues;
+
+  // Previous instruction's location information. This is used to determine
+  // label location to indicate scope boundries in dwarf debug info.
+  DebugLoc PrevInstLoc;
+  MCSymbol *PrevLabel;
+
+  // This location indicates end of function prologue and beginning of function
+  // body.
+  DebugLoc PrologEndLoc;
+
+  // If nonnull, stores the current machine function we're processing.
+  const MachineFunction *CurFn;
+
+  // If nonnull, stores the current machine instruction we're processing.
+  const MachineInstr *CurMI;
+
+  // If nonnull, stores the CU in which the previous subprogram was contained.
+  const DwarfCompileUnit *PrevCU;
+
+  // Section Symbols: these are assembler temporary labels that are emitted at
+  // the beginning of each supported dwarf section.  These are used to form
+  // section offsets and are created by EmitSectionLabels.
+  MCSymbol *DwarfInfoSectionSym, *DwarfAbbrevSectionSym;
+  MCSymbol *DwarfStrSectionSym, *TextSectionSym, *DwarfDebugRangeSectionSym;
+  MCSymbol *DwarfDebugLocSectionSym, *DwarfLineSectionSym, *DwarfAddrSectionSym;
+  MCSymbol *FunctionBeginSym, *FunctionEndSym;
+  MCSymbol *DwarfInfoDWOSectionSym, *DwarfAbbrevDWOSectionSym;
+  MCSymbol *DwarfTypesDWOSectionSym;
+  MCSymbol *DwarfStrDWOSectionSym;
+  MCSymbol *DwarfGnuPubNamesSectionSym, *DwarfGnuPubTypesSectionSym;
+
+  // As an optimization, there is no need to emit an entry in the directory
+  // table for the same directory as DW_AT_comp_dir.
+  StringRef CompilationDir;
+
+  // Counter for assigning globally unique IDs for ranges.
+  unsigned GlobalRangeCount;
+
+  // Holder for the file specific debug information.
+  DwarfFile InfoHolder;
+
+  // Holders for the various debug information flags that we might need to
+  // have exposed. See accessor functions below for description.
+
+  // Holder for imported entities.
+  typedef SmallVector<std::pair<const MDNode *, const MDNode *>, 32>
+  ImportedEntityMap;
+  ImportedEntityMap ScopesWithImportedEntities;
+
+  // Map from MDNodes for user-defined types to the type units that describe
+  // them.
+  DenseMap<const MDNode *, const DwarfTypeUnit *> DwarfTypeUnits;
+
+  SmallVector<std::pair<std::unique_ptr<DwarfTypeUnit>, DICompositeType>, 1> TypeUnitsUnderConstruction;
+
+  // Whether to emit the pubnames/pubtypes sections.
+  bool HasDwarfPubSections;
+
+  // Whether or not to use AT_ranges for compilation units.
+  bool HasCURanges;
+
+  // Whether we emitted a function into a section other than the default
+  // text.
+  bool UsedNonDefaultText;
+
+  // Version of dwarf we're emitting.
+  unsigned DwarfVersion;
+
+  // Maps from a type identifier to the actual MDNode.
+  DITypeIdentifierMap TypeIdentifierMap;
+
+  // DWARF5 Experimental Options
+  bool HasDwarfAccelTables;
+  bool HasSplitDwarf;
+
+  // Separated Dwarf Variables
+  // In general these will all be for bits that are left in the
+  // original object file, rather than things that are meant
+  // to be in the .dwo sections.
+
+  // Holder for the skeleton information.
+  DwarfFile SkeletonHolder;
+
+  /// Store file names for type units under fission in a line table header that
+  /// will be emitted into debug_line.dwo.
+  // FIXME: replace this with a map from comp_dir to table so that we can emit
+  // multiple tables during LTO each of which uses directory 0, referencing the
+  // comp_dir of all the type units that use it.
+  MCDwarfDwoLineTable SplitTypeUnitFileTable;
+
+  // True iff there are multiple CUs in this module.
+  bool SingleCU;
+  bool IsDarwin;
+
+  AddressPool AddrPool;
+
+  DwarfAccelTable AccelNames;
+  DwarfAccelTable AccelObjC;
+  DwarfAccelTable AccelNamespace;
+  DwarfAccelTable AccelTypes;
+
+  DenseMap<const Function *, DISubprogram> FunctionDIs;
+  ...
+}
+\end{lstlisting}
+
+
+\subsection{DwarfException.h}
+
+包括ARMException和DwarfCFEExcetion的类定义，这两个.cpp文件(./lib/CodeGen/AsmPrinter)没有对应的.h文件，就是因为定义是放在了DwarfException.h中。这两个类都是继承自EHStreamer的。
+
+\fbox{
+	\parbox{\textwidth}{
+		class
+		\begin{adjustwidth}{5em}{0em}
+			DwarfCFIException [llvm]\\
+			ARMException [llvm]\\
+		\end{adjustwidth}
+	}
+}
+
+\subsubsection{DwarfCFIException.class}
+\begin{lstlisting}[language=C++]
+class DwarfCFIException : public EHStreamer {
+  /// shouldEmitPersonality - Per-function flag to indicate if .cfi_personality
+  /// should be emitted.
+  bool shouldEmitPersonality;
+
+  /// shouldEmitLSDA - Per-function flag to indicate if .cfi_lsda
+  /// should be emitted.
+  bool shouldEmitLSDA;
+
+  /// shouldEmitMoves - Per-function flag to indicate if frame moves info
+  /// should be emitted.
+  bool shouldEmitMoves;
+
+  AsmPrinter::CFIMoveType moveTypeModule;
+  ...
+}
+\end{lstlisting}
+  
+  
+\subsubsection{ARMException.class}
+\begin{lstlisting}[language=C++]
+ class ARMException : public EHStreamer {
+  void emitTypeInfos(unsigned TTypeEncoding) override;
+  ARMTargetStreamer &getTargetStreamer();
+
+  /// shouldEmitCFI - Per-function flag to indicate if frame CFI info
+  /// should be emitted.
+  bool shouldEmitCFI;
+  ...
+}
+\end{lstlisting}
+
+
+\subsection{DwarfExpression.h}
+
+\subsubsection{DwarfExpression.class}
+\begin{lstlisting}[language=C++]
+/// Base class containing the logic for constructing DWARF expressions
+/// independently of whether they are emitted into a DIE or into a .debug_loc
+/// entry.
+class DwarfExpression {
+protected:
+  const AsmPrinter &AP;
+  // Various convenience accessors that extract things out of AsmPrinter.
+  const TargetRegisterInfo *getTRI() const;
+  unsigned getDwarfVersion() const;
+  ...
+}
+\end{lstlisting}
+
+
+\subsection{DwarfFile.h}
+
+
+\subsubsection{DwarfFile.class}
+\begin{lstlisting}[language=C++]
+class DwarfFile {
+  // Target of Dwarf emission, used for sizing of abbreviations.
+  AsmPrinter *Asm;
+
+  DwarfDebug &DD;
+
+  // Used to uniquely define abbreviations.
+  FoldingSet<DIEAbbrev> AbbreviationsSet;
+
+  // A list of all the unique abbreviations in use.
+  std::vector<DIEAbbrev *> Abbreviations;
+
+  // A pointer to all units in the section.
+  SmallVector<std::unique_ptr<DwarfUnit>, 1> CUs;
+
+  DwarfStringPool StrPool;
+
+  // Collection of dbg variables of a scope.
+  DenseMap<LexicalScope *, SmallVector<DbgVariable *, 8>> ScopeVariables;
+
+  // Collection of abstract subprogram DIEs.
+  DenseMap<const MDNode *, DIE *> AbstractSPDies;
+
+  /// Maps MDNodes for type system with the corresponding DIEs. These DIEs can
+  /// be shared across CUs, that is why we keep the map here instead
+  /// of in DwarfCompileUnit.
+  DenseMap<const MDNode *, DIE *> MDTypeNodeToDieMap;
+
+
+  ...
+}
+\end{lstlisting}
+
+
+
+\subsection{DwarfStringPool.h}
+
+\subsubsection{DwarfStringPool.class}
+\begin{lstlisting}[language=C++]
+// Collection of strings for this unit and assorted symbols.
+// A String->Symbol mapping of strings used by indirect
+// references.
+class DwarfStringPool {
+  StringMap<std::pair<MCSymbol *, unsigned>, BumpPtrAllocator &> Pool;
+  StringRef Prefix;
+  ...
+}
+\end{lstlisting}
+
+\subsection{DwarfUnit.h}
+Dwarf单元
+
+\fbox{
+	\parbox{\textwidth}{
+		class
+		\begin{adjustwidth}{5em}{0em}
+  class
+    RangeSpan [llvm]\\
+    RangeSpanList [llvm]\\
+    DwarfUnit [llvm]\\
+    DwarfTypeUnit [llvm]\\
+		\end{adjustwidth}
+	}
+}
+
+\subsubsection{RangeSpan.class}
+\begin{lstlisting}[language=C++]
+// Data structure to hold a range for range lists.保持MCSymbol范围的数据结构
+class RangeSpan {
+public:
+  RangeSpan(MCSymbol *S, MCSymbol *E) : Start(S), End(E) {}
+  const MCSymbol *getStart() const { return Start; }
+  const MCSymbol *getEnd() const { return End; }
+  void setEnd(const MCSymbol *E) { End = E; }
+
+private:
+  const MCSymbol *Start, *End;
+};
+\end{lstlisting}
+
+\subsubsection{RangSpanList.class}
+\begin{lstlisting}[language=C++]
+class RangeSpanList {
+private:
+  // Index for locating within the debug_range section this particular span.索引定位
+  MCSymbol *RangeSym;
+  // List of ranges.两个RangeSpan
+  SmallVector<RangeSpan, 2> Ranges;
+  ...
+}
+\end{lstlisting}
+
+\subsubsection{DwarfUnit.class}
+\begin{lstlisting}[language=C++]
+//===----------------------------------------------------------------------===//
+/// Unit - This dwarf writer support class manages information associated
+/// with a source file.
+class DwarfUnit {
+protected:
+  /// UniqueID - a numeric ID unique among all CUs in the module
+  unsigned UniqueID;
+
+  /// Node - MDNode for the compile unit.
+  DICompileUnit CUNode;
+
+  /// Unit debug information entry.单元DIE
+  DIE UnitDie;
+
+  /// Offset of the UnitDie from beginning of debug info section.
+  unsigned DebugInfoOffset;
+
+  /// Asm - Target of Dwarf emission.
+  AsmPrinter *Asm;
+
+  // Holders for some common dwarf information.
+  DwarfDebug *DD;
+  DwarfFile *DU;
+
+  /// IndexTyDie - An anonymous type for index type.  Owned by UnitDie.
+  DIE *IndexTyDie;
+
+  /// MDNodeToDieMap - Tracks the mapping of unit level debug information
+  /// variables to debug information entries.
+  DenseMap<const MDNode *, DIE *> MDNodeToDieMap;
+
+  /// MDNodeToDIEEntryMap - Tracks the mapping of unit level debug information
+  /// descriptors to debug information entries using a DIEEntry proxy.
+  DenseMap<const MDNode *, DIEEntry *> MDNodeToDIEEntryMap;
+
+  /// DIEBlocks - A list of all the DIEBlocks in use.
+  std::vector<DIEBlock *> DIEBlocks;
+  
+  /// DIELocs - A list of all the DIELocs in use.
+  std::vector<DIELoc *> DIELocs;
+
+  /// ContainingTypeMap - This map is used to keep track of subprogram DIEs that
+  /// need DW_AT_containing_type attribute. This attribute points to a DIE that
+  /// corresponds to the MDNode mapped with the subprogram DIE.
+  DenseMap<DIE *, const MDNode *> ContainingTypeMap;
+
+  // DIEValueAllocator - All DIEValues are allocated through this allocator.
+  BumpPtrAllocator DIEValueAllocator;
+
+  // DIEIntegerOne - A preallocated DIEValue because 1 is used frequently.
+  DIEInteger *DIEIntegerOne;
+
+  /// The section this unit will be emitted in.单元发出的section
+  const MCSection *Section;
+  ...
+}
+\end{lstlisting}
+
+\subsubsection{DwarfTypeUnit.class}
+\begin{lstlisting}[language=C++]
+class DwarfTypeUnit : public DwarfUnit {
+  uint64\_t TypeSignature;
+  const DIE *Ty;
+  DwarfCompileUnit &CU;
+  MCDwarfDwoLineTable *SplitLineTable;
+  ...
+}
+\end{lstlisting}
+
+
+
+\subsection{EHStreamer.h}
+\subsubsection{EHStreamer.class}
+\begin{lstlisting}[language=C++]
+/// Emits exception handling directives.发出异常处理指令
+class EHStreamer : public AsmPrinterHandler {
+protected:
+  /// Target of directive emission.
+  AsmPrinter *Asm;
+
+  /// Collected machine module information.
+  MachineModuleInfo *MMI;
+  ...
+}
+\end{lstlisting}
+
+\subsubsection{PadRange.struct}
+\begin{lstlisting}[language=C++]
+  /// Structure holding a try-range and the associated landing pad.
+  struct PadRange {
+    // The index of the landing pad.
+    unsigned PadIndex;
+    // The index of the begin and end labels in the landing pad's label lists.
+    unsigned RangeIndex;
+  };
+\end{lstlisting}
+
+
+\subsubsection{CallSiteEntry.struct}
+\begin{lstlisting}[language=C++]
+ /// Structure describing an entry in the call-site table.
+  struct CallSiteEntry {
+    // The 'try-range' is BeginLabel .. EndLabel.
+    MCSymbol *BeginLabel; // zero indicates the start of the function.
+    MCSymbol *EndLabel;   // zero indicates the end of the function.
+
+    // The landing pad starts at PadLabel.
+    MCSymbol *PadLabel;   // zero indicates that there is no landing pad.
+    unsigned Action;
+  };
+\end{lstlisting}
+
+
+\section{MC}
+\par
+\fbox{
+	\parbox{\textwidth}{
+		\begin{adjustwidth}{5em}{0em}
+   		MCSection.h\\
+    		MCSymbol.h\\
+    		MCValue.h\\
+    		MCLabel.h\\
+    		MCExpr.h\\
+		\end{adjustwidth}
+	}
+}
+\subsection{MCSection.h}
+\subsection{MCSymbol.h}
+\subsection{MCValue.h}
+\subsection{MCLabel.h}
+\subsection{MCExpr.h}
+
+
+
+MCSection.h(./include/llvm/MC)
+
+
+\section{IR}
+IR(Intermediate representation)中间表示(./include/llvm/IR)包含较多文件，挑选部分进行介绍。
+\par
+\fbox{
+	\parbox{\textwidth}{
+		\begin{adjustwidth}{5em}{0em}
+    		LLVMContext.h\\
+   		Module.h\\
+   		Function.h\\
+   		Type.h\\
+   		DerivedTypes.h\\
+   		AsmWriter.cpp\\
+    		ModuleSlotTracker.h\\
+    		IntrinsicInst.h\\
+    		Verifier.h\\
+		\end{adjustwidth}
+	}
+}
+\par
+
+\subsection{LLVMContext.h}
+llvm使用的线程环境
+
+
+\subsection{Module.h}
+\fbox{
+	\parbox{\textwidth}{
+ 	class
+		\begin{adjustwidth}{5em}{0em}
+    		Module [llvm]
+		\end{adjustwidth}
+	}
+}
+	
+	
+Module.h{./include/llvm/IR}	
+Module接口存储LLVM信息，
+
+typedef定义了几个ADT list的声明，globallist、fucntionlist、aliaslist、mdlist、SymTab，
+还有每个list的迭代iterator。
+\begin{lstlisting}[language=C++]
+class Module {
+  /// The type for the list of global variables.
+  typedef iplist<GlobalVariable> GlobalListType;
+  /// The type for the list of functions.
+  typedef iplist<Function> FunctionListType;
+  /// The type for the list of aliases.
+  typedef iplist<GlobalAlias> AliasListType;
+  /// The type for the list of named metadata.
+  typedef ilist<NamedMDNode> NamedMDListType;
+  /// The type of the comdat "symbol" table.
+  typedef StringMap<Comdat> ComdatSymTabType;
+  
+    /// The Global Variable iterator.
+  typedef GlobalListType::iterator                      global_iterator;
+  /// The Global Variable constant iterator.
+  typedef GlobalListType::const_iterator          const_global_iterator;
+
+  /// The Function iterators.
+  typedef FunctionListType::iterator                           iterator;
+  /// The Function constant iterator
+  typedef FunctionListType::const_iterator               const_iterator;
+
+  /// The Function reverse iterator.
+  typedef FunctionListType::reverse_iterator             reverse_iterator;
+  /// The Function constant reverse iterator.
+  typedef FunctionListType::const_reverse_iterator const_reverse_iterator;
+
+  /// The Global Alias iterators.
+  typedef AliasListType::iterator                        alias_iterator;
+  /// The Global Alias constant iterator
+  typedef AliasListType::const_iterator            const_alias_iterator;
+
+  /// The named metadata iterators.
+  typedef NamedMDListType::iterator             named_metadata_iterator;
+  /// The named metadata constant iterators.
+  typedef NamedMDListType::const_iterator const_named_metadata_iterator;
+  ...
+}
+\end{lstlisting}
+
+
+\begin{lstlisting}[language=C++]
+class Module {
+  ...
+  LLVMContext &Context;           ///< The LLVMContext from which types and
+                                  ///< constants are allocated.
+  GlobalListType GlobalList;      ///< The Global Variables in the module
+  FunctionListType FunctionList;  ///< The Functions in the module
+  AliasListType AliasList;        ///< The Aliases in the module
+  NamedMDListType NamedMDList;    ///< The named metadata in the module
+  std::string GlobalScopeAsm;     ///< Inline Asm at global scope.
+  ValueSymbolTable *ValSymTab;    ///< Symbol table for values
+  ComdatSymTabType ComdatSymTab;  ///< Symbol table for COMDATs
+  std::unique_ptr<GVMaterializer>
+  Materializer;                   ///< Used to materialize GlobalValues
+  std::string ModuleID;           ///< Human readable identifier for the module标识符
+  std::string TargetTriple;       ///< Platform target triple Module compiled on
+                                  ///< Format: (arch)(sub)-(vendor)-(sys0-(abi)
+  void *NamedMDSymTab;            ///< NamedMDNode names.
+
+  // We need to keep the string because the C API expects us to own the string
+  // representation.
+  // Since we have it, we also use an empty string to represent a module without
+  // a DataLayout. If it has a DataLayout, these variables are in sync and the
+  // string is just a cache of getDataLayout()->getStringRepresentation().
+  std::string DataLayoutStr;
+  DataLayout DL;
+
+  friend class Constant;  
+  ...
+}
+\end{lstlisting}
+
+\subsection{Function.h}
+
+Function.h(./include/llvm/IR)
+typedef了Argument和BasicBlock的list及迭代器。
+\begin{lstlisting}[language=C++]
+class Function : public GlobalObject, public ilist_node<Function> {
+public:
+  typedef iplist<Argument> ArgumentListType;
+  typedef iplist<BasicBlock> BasicBlockListType;
+
+  // BasicBlock iterators...
+  typedef BasicBlockListType::iterator iterator;
+  typedef BasicBlockListType::const_iterator const_iterator;
+
+  typedef ArgumentListType::iterator arg_iterator;
+  typedef ArgumentListType::const_iterator const_arg_iterator;
+  ...
+}
+\end{lstlisting}
+
+类主要组成还是BasicBlock的list和Argument的list
+ValueSymbolTable和AttributeSet分别是这两个类的.h文件中定义的类(./include/llvm/IR)。
+\begin{lstlisting}[language=C++]
+class Function : public GlobalObject, public ilist_node<Function> {
+  ...
+private:
+  // Important things that make up a function!
+  BasicBlockListType  BasicBlocks;        ///< The basic blocks
+  mutable ArgumentListType ArgumentList;  ///< The formal arguments
+  ValueSymbolTable *SymTab;               ///< Symbol table of args/instructions
+  AttributeSet AttributeSets;             ///< Parameter attributes
+  ...
+}
+\end{lstlisting}
+  
+\subsection{Type.h}
+Type的基类，成员变量是线程环境和一个32位值低8位为TypeID，高24位为SubclassData
+\begin{lstlisting}[language=C++]
+class Type {
+  ...
+  private:
+  /// Context - This refers to the LLVMContext in which this type was uniqued.
+  LLVMContext &Context;
+
+  // Due to Ubuntu GCC bug 910363:
+  // https://bugs.launchpad.net/ubuntu/+source/gcc-4.5/+bug/910363
+  // Bitpack ID and SubclassData manually.
+  // Note: TypeID : low 8 bit; SubclassData : high 24 bit.
+  uint32_t IDAndSubclassData;
+  ...
+}
+\end{lstlisting}	
+  
+
+\subsection{DerivedTypes.h}
+DerivedTypes衍生类型(./include/llvm/IR)中包含较多的Type，都是从Type.h中的Type基类继承过来的。
+具体成员见下。
+\par
+\fbox{
+	\parbox{\textwidth}{
+		class
+		\begin{adjustwidth}{5em}{0em}
+    		IntegerType [llvm]\\
+    		FunctionType [llvm]\\
+    		CompositeType [llvm]\\
+    		StructType [llvm]\\
+    		SequentialType [llvm]\\
+    		ArrayType [llvm]\\
+    		VectorType [llvm]\\
+    		PointerType [llvm]\\
+		\end{adjustwidth}	
+	}
+}
+
+
+\subsubsection{IntegerType.h}
+\subsubsection{FunctionType.h}
+\subsubsection{CompositeType.h}
+\subsubsection{StructType.h}
+\subsubsection{SequentialType.h}
+\subsubsection{ArrayType.h}
+\subsubsection{VectorType.h}
+\subsubsection{PointerType.h}
+
+\subsection{AsmWriter.cpp}
+\par
+\fbox{
+	\parbox{\textwidth}{
+	class
+		\begin{adjustwidth}{5em}{0em}
+    		TypePrinting [__anon2]
+    		SlotTracker [llvm]
+    		AssemblyWriter [__anon4]
+		\end{adjustwidth}	
+	}
+}
+
+\subsubsection{SlotTracker}
+\begin{lstlisting}[language=C++]
+//===----------------------------------------------------------------------===//
+// SlotTracker Class: Enumerate slot numbers for unnamed values
+//===----------------------------------------------------------------------===//
+/// This class provides computation of slot numbers for LLVM Assembly writing.
+/// 该类提供了汇编的slot number的相关操作。
+class SlotTracker {
+public:
+  /// ValueMap - A mapping of Values to slot numbers.
+  typedef DenseMap<const Value*, unsigned> ValueMap;
+
+private:
+  /// TheModule - The module for which we are holding slot numbers.
+  const Module* TheModule;
+
+  /// TheFunction - The function for which we are holding slot numbers.
+  const Function* TheFunction;
+  bool FunctionProcessed;
+  bool ShouldInitializeAllMetadata;
+
+  /// mMap - The slot map for the module level data.
+  ValueMap mMap;
+  unsigned mNext;
+
+  /// fMap - The slot map for the function level data.
+  ValueMap fMap;
+  unsigned fNext;
+
+  /// mdnMap - Map for MDNodes.
+  DenseMap<const MDNode*, unsigned> mdnMap;
+  unsigned mdnNext;
+
+  /// asMap - The slot map for attribute sets.
+  DenseMap<AttributeSet, unsigned> asMap;
+  unsigned asNext;
+  ...
+}
+\end{lstlisting}
+
+\subsection{ModuleSlotTracker.h}
+ModuleSlotTracker成员变量比较简单，unique_ptr的SlotTracker，和Modue、FUnction、SlotTracker三个指针。
+\begin{lstlisting}[language=C++]
+class ModuleSlotTracker {
+  /// Storage for a slot tracker.
+  std::unique_ptr<SlotTracker> MachineStorage;
+
+  const Module *M = nullptr;
+  const Function *F = nullptr;
+  SlotTracker *Machine = nullptr;
+  ...
+}
+
+\subsection{IntrinsicInst.h}
+
+
+
+\subsection{Verifier.h}
+
+
+
+
+
+\section{example}
+
+\subsection{ModuleMaker.h}
+\begin{lstlisting}[language=C++]
+//===- examples/ModuleMaker/ModuleMaker.cpp - Example project ---*- C++ -*-===//
+//
+//                     The LLVM Compiler Infrastructure
+//
+// This file is distributed under the University of Illinois Open Source
+// License. See LICENSE.TXT for details.
+//
+//===-------------------------------------===//
+//
+// This programs is a simple example that creates an LLVM module "from scratch",
+// emitting it as a bitcode file to standard out.  This is just to show how
+// LLVM projects work and to demonstrate some of the LLVM APIs.
+//
+//===-------------------------------------===//
+
+#include "llvm/Bitcode/ReaderWriter.h"
+#include "llvm/IR/Constants.h"
+#include "llvm/IR/DerivedTypes.h"
+#include "llvm/IR/Instructions.h"
+#include "llvm/IR/LLVMContext.h"
+#include "llvm/IR/Module.h"
+#include "llvm/Support/raw_ostream.h"
+using namespace llvm;
+
+int main() {
+  LLVMContext Context;	//声明线程环境
+
+  // Create the "module" or "program" or "translation unit" to hold the
+  // function 第一个参数"test"是ModuleID(string)
+  Module *M = new Module("test", Context);
+
+  // Create the main function: first create the type 'int ()'无参创建FunctionType，第一个参数为结果类型(Type× Result)，第二个参数为是否变量参数(bool isVarArg)
+  FunctionType *FT =
+    FunctionType::get(Type::getInt32Ty(Context), /*not vararg*/false);
+
+  // By passing a module as the last parameter to the Function constructor,
+  // it automatically gets appended to the Module.函数的构造函数，通过最后一个参数M，将函数添加到模块里面。
+  Function *F = Function::Create(FT, Function::ExternalLinkage, "main", M);
+
+  // Add a basic block to the function... again, it automatically inserts
+  // because of the last argument.创建基本块的构造函数，通过最后一个参数F，自动添加到Function中
+  BasicBlock *BB = BasicBlock::Create(Context, "EntryBlock", F);
+
+  // Get pointers to the constant integers...获取常数指针
+  Value *Two = ConstantInt::get(Type::getInt32Ty(Context), 2);
+  Value *Three = ConstantInt::get(Type::getInt32Ty(Context), 3);
+
+  // Create the add instruction... does not insert...
+  Instruction *Add = BinaryOperator::Create(Instruction::Add, Two, Three,
+                                            "addresult");
+
+  // explicitly insert it into the basic block...
+  BB->getInstList().push_back(Add);
+
+  // Create the return instruction and add it to the basic block
+  BB->getInstList().push_back(ReturnInst::Create(Context, Add));
+
+  // Output the bitcode file to stdout
+  WriteBitcodeToFile(M, outs());
+
+  // Delete the module and all of its contents.
+  delete M;
+  return 0;
+}
+\end{lstlisting}
+
+
+\section{ourjob}
+\subsection{llvm-irdwarf.h}
+\begin{lstlisting}[language=C++]
+// LLVM
+#include "llvm/IR/IntrinsicInst.h"
+#include "llvm/IR/LLVMContext.h"
+#include "llvm/IR/Module.h"
+#include "llvm/IR/ModuleSlotTracker.h"
+#include "llvm/IR/Verifier.h"
+#include "llvm/IRReader/IRReader.h"
+#include "llvm/Support/CommandLine.h"
+#include "llvm/Support/Debug.h"
+#include "llvm/Support/Format.h"
+#include "llvm/Support/FormattedStream.h"
+#include "llvm/Support/ManagedStatic.h"
+#include "llvm/Support/MemoryBuffer.h"
+#include "llvm/Support/PrettyStackTrace.h"
+#include "llvm/Support/Signals.h"
+#include "llvm/Support/SourceMgr.h"
+#include "llvm/Support/raw_ostream.h"
+// STL
+#include <string>
+
+static llvm::cl::opt<std::string>
+InputFilename(llvm::cl::Positional, llvm::cl::desc("Bitcode file"),
+              llvm::cl::Required);
+
+struct MDTracker {
+    // map for MDNodes
+    llvm::DenseMap<const llvm::MDNode *, unsigned> mdnMap;
+    unsigned mdnNext;
+
+    explicit MDTracker() : mdnMap(), mdnNext(0) {}
+
+    void CreateMetadataSlot(const llvm::MDNode *N) {
+        unsigned DestSlot = mdnNext;
+        if (!mdnMap.insert(std::make_pair(N, DestSlot)).second)
+            return;
+        ++mdnNext;
+
+        // Recursively add any MDNodes referenced by operands.
+        for (unsigned i = 0, e = N->getNumOperands(); i != e; ++i)
+            if (const llvm::MDNode *Op = llvm::dyn_cast_or_null<llvm::MDNode>(N->getOperand(i)))
+                CreateMetadataSlot(Op);
+    }
+
+    void processInstructionMDNode(const llvm::Instruction &I) {
+      // Process metadata used directly by intrinsics.
+      if (const llvm::CallInst *CI = llvm::dyn_cast<llvm::CallInst>(&I))
+        if (llvm::Function *F = CI->getCalledFunction())
+          if (F->isIntrinsic())
+            for (auto &Op : I.operands())
+              if (auto *V = llvm::dyn_cast_or_null<llvm::MetadataAsValue>(Op))
+                if (llvm::MDNode *N = llvm::dyn_cast<llvm::MDNode>(V->getMetadata()))
+                  CreateMetadataSlot(N);
+
+      // Process metadata attached to this instruction.
+      llvm::SmallVector<std::pair<unsigned, llvm::MDNode *>, 4> MDs;
+      I.getAllMetadata(MDs);
+      for (auto &MD : MDs)
+        CreateMetadataSlot(MD.second);
+    }
+
+    void processFunctionMDNode(const llvm::Function &F) {
+        llvm::SmallVector<std::pair<unsigned, llvm::MDNode *>, 4> MDs;
+        for (auto &BB : F) {
+            F.getAllMetadata(MDs);
+            for (auto &MD : MDs)
+                CreateMetadataSlot(MD.second);
+
+            for (auto &I : BB)
+                processInstructionMDNode(I);
+        }
+    }
+
+    void processModuleMDNode(const llvm::Module &M) {
+      // Add metadata used by named metadata.
+      for (const llvm::NamedMDNode &NMD : M.named_metadata()) {
+        for (unsigned i = 0, e = NMD.getNumOperands(); i != e; ++i)
+          CreateMetadataSlot(NMD.getOperand(i));
+      }
+
+      for (const llvm::Function &F : M)
+        processFunctionMDNode(F);
+    }
+
+    void print(llvm::raw_ostream &ROS) {
+        llvm::SmallVector<const llvm::MDNode *, 16> Nodes;
+        Nodes.resize(mdnMap.size());
+        for (auto &mdPair : mdnMap)
+            Nodes[mdPair.second] = llvm::cast<llvm::MDNode>(mdPair.first);
+
+        for (unsigned i = 0, e = Nodes.size(); i != e; ++i)
+            print(ROS, i, Nodes[i]);
+    }
+
+    void print(llvm::raw_ostream &ROS, unsigned Slot, const llvm::MDNode *mdNode) {
+        ROS << '!' << Slot << ": ";
+        mdNode->print(ROS);
+        ROS << "\n";
+    }
+};
+
+static int DumpInput(llvm::StringRef ProgName, llvm::StringRef Filename, llvm::LLVMContext &Context) {
+    llvm::SMDiagnostic Err;
+    std::unique_ptr<llvm::Module> M = llvm::parseIRFile(Filename, Err, Context);
+    if (!M) {
+        Err.print(ProgName.data(), llvm::errs());
+        return 1;
+    }
+
+    // Verify module immediately to catch problems before doInitialization() is
+    // called on any passes.
+    if (llvm::verifyModule(*M, &llvm::errs())) {
+        llvm::errs() << ProgName << ": " << Filename
+                     << ": error: input module is broken!\n";
+        return 1;
+    }
+
+    M->dump();
+
+    llvm::errs() << "-----------------------------------------------------\n";
+
+    MDTracker mdTracker;
+    mdTracker.processModuleMDNode(*M);
+    mdTracker.print(llvm::errs());
+
+    return 0;
+}
+
+int main(int argc, char **argv) {
+    // Print a stack trace if we signal out.
+    llvm::sys::PrintStackTraceOnErrorSignal();
+    llvm::PrettyStackTraceProgram X(argc, argv);
+
+    llvm::LLVMContext &Context = llvm::getGlobalContext();
+    llvm::llvm_shutdown_obj Y;  // Call llvm_shutdown() on exit.
+
+    llvm::cl::ParseCommandLineOptions(argc, argv, "llvm IR Dwarf Dumper\n");
+
+    return DumpInput(argv[0], InputFilename, Context);
+}
+\end{lstlisting}
+
+
+
+
+
+
+\end{document}

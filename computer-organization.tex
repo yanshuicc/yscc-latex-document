@@ -1,0 +1,143 @@
+\documentclass{ctexart}
+%\documentclass[a4paper,10pt]{scrartcl}
+
+\usepackage[colorlinks,
+            linkcolor=black,
+            anchorcolor=blue,
+            citecolor=green]{hyperref}
+  
+
+
+\usepackage{multirow}
+
+\usepackage{geometry}
+\geometry{left=2.5cm,right=2.5cm,top=2.5cm,bottom=2.5cm}
+
+\hfuzz=\maxdimen
+\tolerance=10000
+\hbadness=10000
+\usepackage{xltxtra}
+\usepackage{titlesec}
+\titleformat{\section}[hang]{\Huge\bfseries}{第\,\thesection\,章}{1em}{}
+
+
+%设置section的中文编号
+% \usepackage[fntef]{ctexcap}
+% \setromanfont[Mapping=tex-text]{Linux Libertine O}
+
+
+% \setsansfont[Mapping=tex-text]{DejaVu Sans}
+% \setmonofont[Mapping=tex-text]{DejaVu Sans Mono}
+
+\title{Computer Organization}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\newpage
+
+\tableofcontents
+
+\section{计算机系统概述}
+
+\section{数据的表示和运算}
+
+\section{存储系统}
+
+\section{指令系统}
+
+\section{中央处理器}
+
+\section{总线}
+
+\section{输入/输出系统}
+\subsection{ I/O 系统基本概念}
+1）外部设备：包括输入输出设备及通过输入输出接口才能访问的外存储设备。
+
+2）接口：在各个外设与主机之间的数据传输时进行各种协调工作的逻辑部件。协调包括传输过程中速度的匹配、电平和格式转换等。
+
+3）输入设备：用于向计算机系统输入命令和文本、数据等信息的部件。
+键盘和鼠标是最近部的输入设备。
+
+4）输出设备：用于将计算机系统中的信息输出到计算机外部进行显示、交换等的部件。
+显示器和打印机是最基本的输出设备。
+
+5）外存设备：是指除计算机内存及CPU缓存等以外的存储器。硬磁盘、光盘等是最基本的外存设备。
+
+I/O软件：驱动程序、用户程序、管理程序、升级补丁，采用I/O指令和通道指令实现CPU和I/O设备的信息交换。
+
+I/O硬件：外部设备、设备控制器和接口、I/O总线等。通过社会被控制器来控制I/O设备的具体动作，通过I/O接口与主机（总线）相连。
+
+\subsection{外部设备}
+
+\subsubsection{输入设备}
+1、键盘
+
+最常用的输入设备
+\\\\
+
+2、鼠标
+
+机械式、光电式
+
+
+\subsubsection{输出设备}
+
+1、显示器
+
+阴极射线管CRT显示器、液晶显示器LCD、LED显示器
+
+
+2、打印机
+
+针式打印机、喷墨式打印机、激光打印机
+
+\subsubsection{外存储器}
+
+辅助存储器，磁表面存储器
+
+\textcircled{1} 存储容量大，位价位低
+\textcircled{2} 介质重复使用
+\textcircled{3} 记录信息可以长期保存而不丢失
+\textcircled{4} 非破坏性读出
+
+\textcircled{1} 读取速度慢
+\textcircled{2} 机械结构复杂
+\textcircled{3} 对工作环境要求高
+
+1、磁盘存储器
+（1）组成
+
+\textcircled{1} 存储区域
+存储区域
+
+磁头数
+
+柱面数
+
+{2} 磁记录原理
+
+{3 }磁盘的性能指标
+
+\textcircled{1}容量
+\textcircled{2}记录密度
+\textcircled{3}平均存取时间
+\textcircled{4}数据传输率
+
+（4）磁盘地址
+
+2、磁盘阵列
+
+3、光盘存储器
+
+4、固态硬盘
+
+\subsection{I/O接口}
+
+\subsection{I/O方式}
+
+
+
+\end{document}

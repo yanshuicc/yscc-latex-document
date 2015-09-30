@@ -1,0 +1,408 @@
+\documentclass{ctexart}
+\usepackage{verbatim}
+\usepackage{amsmath}
+
+%箭头等号等
+\usepackage{extarrows}
+%链接颜色，主要是目录链接
+\usepackage[colorlinks,
+            linkcolor=black,
+            anchorcolor=blue,
+            citecolor=green]{hyperref}
+
+
+\hfuzz=\maxdimen
+\tolerance=10000
+\hbadness=10000
+
+%多栏目录
+\usepackage{multicol}
+\AtBeginDocument{\addtocontents{toc}{\protect\begin{multicols}{2}}}
+\AtEndDocument{\addtocontents{toc}{\protect\end{multicols}}}
+
+\begin{document}
+%\setlength{\parindent}{0pt}
+
+%\begin{comment}
+\tableofcontents
+\newpage
+
+
+\section{第一章 函数 极限 连续}
+\subsection{函数}
+\subsubsection{定义}
+基本初等函数：
+常数函数\ 幂函数\ 指数函数\ 对数函数\ 三角函数\ 反三角函数
+
+初等函数：基本初等函数经过有限次的四则运算、复合运算得到的函数。
+\\\\
+
+\subsubsection{性质}
+
+数列收敛的性质：唯一、有界、保序
+
+\subsection{极限}
+\subsubsection{定义}
+数列的极限：设数列${a_n}$,a是常数，弱队任意的$\varepsilon$>0，总存在自然数N，队人一的自然数n>N，由$|a_n>a|<\varepsilon$，
+则称数列${a_n}$的极限是a，或数列${a_n}$收敛于a，表示为$\lim\limits_{n \rightarrow \infty}a_n = a$。
+
+若数列不存在极限，则称数列${a_n}$发散。
+\\\\
+
+极限：设函数f(x)在点$x_0$的某个去心邻域$\mathring{U}(x_0$)内有定义，A是常数，若$\forall \varepsilon > 0,\exists \delta >0,\forall x: 0<|x-x_0|<\delta,有|f(x)-A|<\varepsilon$，则称函数f(x)当x$\rightarrow x_0$时存在极限，极限是A，记作
+\begin{center}
+$\lim\limits_{x \rightarrow x_0} f(x)=A$\\
+\end{center}。
+\\\\
+
+导数：设函数y=f(x)在点$x_0$的某个邻域内由定义，党自变量x在$x_0$处获得增量$\bigtriangleup x$(点$x_0+\bigtriangleup x$仍在该邻域内)时，相应的函数的增量为$\bigtriangleup y=f(x_0+\bigtriangleup x)-f(x_0)$，如果
+
+\begin{center}
+$\lim\limits_{\bigtriangleup \rightarrow 0} \frac{\bigtriangleup y}{\bigtriangleup x}=\lim\limits_{\bigtriangleup x \rightarrow 0} \frac{f(x_0+\bigtriangleup x)-f(x_0)}{\bigtriangleup x}$
+\end{center}
+
+存在，则称函数y=f(x)在点$x_0$处可导，则成这个极限为函数y=f(x)在点$x_0$处的导数记为$f'(x_0)$。也记为
+
+\begin{center}
+$y'|_{x=x_0},\frac{dy}{dx}|_{x=x_0}$或$\frac{d}{dx}f(x)|_{x=x_0}$
+\end{center}
+
+即
+
+\begin{center}
+$f'(x_0)=\lim\limits_{\bigtriangleup x \rightarrow 0}\frac{\bigtriangleup y}{\bigtriangleup x}=\lim\limits_{\bigtriangleup x \rightarrow 0} \frac{f(x_0+\bigtriangleup x)-f(x_0)}{\bigtriangleup x}$
+\end{center}
+
+
+\subsubsection{性质}
+极限的性质：唯一、局部有界、局部保序、局部保号
+保号性：$\lim\limits_{x\rightarrow x_0}f(x)=A，A\neq 0,$则存在$x_0$的一个去心邻域，此邻域中f(x)与A同号。
+\\\\
+
+极限存在$\Leftrightarrow f(x_0^-)=f(x_0^+)=A$
+\\\\
+
+夹逼定理：在$x_0$的去心邻域中
+$g(x) \leq f(x) \leq h(x),\lim\limits_{x \rightarrow x_0}g(x)=\lim\limits_{x \rightarrow x_0}h(x)=A$
+，则
+$\lim\limits_{x \rightarrow x_0}f(x)=A$
+\\\\
+
+柯西收敛准则：极限$\lim\limits_{x\rightarrow x_0}f(x)$存在$\leftrightarrow \forall \varepsilon >0,\exists \delta >0,\forall x',x''：0<|x'-x''|<\delta 与 0<|x''-x_0|<\delta ，\text{有}|f(x')-f(x'')|<\varepsilon$
+\\\\
+
+等价无穷小的替换:设$x\rightarrow x_0$时， $\alpha (x) \sim a(x)$ $\beta (x) \sim b(x)$，则
+\begin{center}
+$\lim\limits_{x\rightarrow x_0}\frac{\alpha (x)\gamma (x)}{\beta (x)\delta (x)}=\lim\limits_{x\rightarrow x_0}\frac{a (x)\gamma (x)}{b (x)\delta (x)}$ 
+\end{center}
+错误示例：
+\begin{center}
+$\lim\limits_{x\rightarrow 0}\frac{ln(1+x)-x}{x^2}=\lim\limits_{\frac{ln(1+x)}{x^2}-\frac{x}{x^2}}\xlongequal{*}\lim\limits_{\frac{x}{x^2}-\frac{x}{x^2}}=0$
+\end{center}
+*这一步不能用ln(1+x)～x替换，因为不是整个式子的乘、除用等价无穷小替换，而是局部的用等价无穷小替换。
+\subsubsection{公式}
+极限的加减乘除\\
+
+（1）$\lim\limits_{x \rightarrow x_0 }[f(x)\pm g(x)]=\lim\limits_{x \rightarrow x_0} f(x)\pm \lim\limits_{x \rightarrow x_0}g(x)$
+\\
+
+（2）$\lim\limits_{x \rightarrow x_0}f(x)g(x)=\lim\limits_{x \rightarrow x_0}f(x) \lim\limits_{x \rightarrow x_0}g(x)$
+\\
+
+（3）$\lim\limits_{x \rightarrow x_0} \frac{f(x)}{g(x)}=\frac{\lim\limits_{x \rightarrow x_0}f(x)}{\lim\limits_{x \rightarrow x_0}g(x)}$
+\\\\
+
+洛必答法则：\\
+$\lim\limits_{x\rightarrow x_0}f(x)=0 \text{或} \infty,\lim\limits_{x\rightarrow x_0}g(x)=0 \text{或} \infty$\\
+f(x)与g(x)在$x_0$的去心邻域$\mathring{U}$内可导，且g'(x)$\neq$0\\
+$\lim\limits_{x\rightarrow x_0}\frac{f(x)}{g(x)}=\lim\limits_{x\rightarrow x_0}\frac{f'(x)}{g'(x)}$
+几个比较重要的极限
+\\\\
+
+$\lim\limits_{n \rightarrow \infty }(1+ \frac{1}{n})^n=e$
+
+$\lim\limits_{n \rightarrow 0 }(1+ n)^\frac{1}{n}=e$
+
+$\lim\limits_{x\rightarrow \infty} \sqrt[n]{n}=1$
+
+如果$x\rightarrow 0，sinx \sim x,tanx \sim x, ln(1+x)\sim x, (1+x)^a-1\sim ax, arcsinx\sim x, arctanx\sim x, a^x-1\sim xlna(a>0,a \neq 1)$
+\subsubsection{例题}
+
+1、利用极限定义求导数\\
+
+（1）$f(x)=ax+b$\\
+
+$\lim\limits_{h \rightarrow 0}\frac{f(x+h)-f(x)}{h}=\lim\limits_{h \rightarrow 0}\frac{[a(x+h)+b]-(ax+b)}{h}=\lim\limits_{h \rightarrow 0}a=a$
+\\
+
+（2）$f(x)=x^n$\\
+
+$\lim\limits_{h \rightarrow 0}\frac{f(x+h)f(x)}{h}=\lim\limits_{h \rightarrow 0}\frac{(x+h)^n-x^n}{h}\\=\lim\limits_{h \rightarrow 0}\frac{(x^n+C_n^1x^{n-1}h+C_n^2x^{n-2}h^2+...+C_n^{n-1}xh^{n-1}+C_n^nh^n)-x^n}{h}\\=\lim\limits_{h \rightarrow 0}=\lim\limits_{h \rightarrow 0}(C_n^1x^{n-1}+C_n^2x^{n-2}h+...+C_n^n-1xh^{n-2}+C_n^nh^{n-1})\\=C_n^1x^{n-1}=nx^{n-1}$
+\\
+
+（3）$f(x)=a^x(a>0,a\neq 1)$\\
+
+$\lim\limits_{h \rightarrow 0}\frac{a^{x+h}-a^x-a^x}{h}=a^x\lim\limits_{h \rightarrow 0}\frac{a^h-1}{h}=a^x\lim\limits_{h \rightarrow 0}\frac{e^{hlna}-1}{h}\\
+$
+其中
+\begin{center}
+$\lim\limits_{h\rightarrow 0} (1+hlna)^{\frac{1}{hlna}}=e$\\
+$\lim\limits_{h\rightarrow 0}(1+hlna)=e^{hlna}$\\
+$\lim\limits_{h\rightarrow 0}e^{hlna}-1=hlna$\\
+\end{center}
+所以\\
+原式$=a^x\lim\limits_{h\rightarrow 0}\frac{hlna}{h}=a^xlna$
+
+2、定义判断
+设f(x)=u(x)+v(x),g(x)=u(x)-v(x)，并设$\lim\limits_{x\rightarrow x_0}u(x)$与$\lim\limits_{x\rightarrow x_0}v(x)$都不存在，则：\\
+A若$\lim\limits_{x\rightarrow x_0}f(x)$不存在，则$\lim\limits_{x\rightarrow x_0}g(x)$必存在。\\
+B若$\lim\limits_{x\rightarrow x_0}f(x)$不存在，则$\lim\limits_{x\rightarrow x_0}g(x)$必不存在。\\
+C若$\lim\limits_{x\rightarrow x_0}f(x)$存在，则$\lim\limits_{x\rightarrow x_0}g(x)$必不存在。\\
+D若$\lim\limits_{x\rightarrow x_0}f(x)$存在，则$\lim\limits_{x\rightarrow x_0}g(x)$必存在。\\
+
+
+\subsection{连续}
+\subsubsection{定义}
+连续：设函数f(x)在U($x_0$)有定义。若函数f(x)在$x_0$存在极限，且极限就是f($x_0$)，即
+\begin{center}
+$\lim\limits_{x \rightarrow x_0}f(x)=f(x_0)$
+\end{center}
+，则称函数f(x)在$x_0$连续,$x_0$是函数f(x)的连续点。
+\\\\
+
+间断点：若函数f(x)在点$x_0$不满足连续定义的条件，则称函数f(x)在点$x_0$是间断的，并称$x_0$是函数f(x)的间断点。
+
+（1）函数f(x)在$x_0$没有定义。
+
+（2）极限$\lim\limits_{x \rightarrow x_0}f(x)$存在，即$f(x_0-0)=f(x_0+0)$，但$\lim\limits_{x \rightarrow x_0}f(x) \neq f(x_0)$（可去间断点）。
+
+（3）极限$\lim\limits_{x \rightarrow x_0}f(x)$不存在
+
+\textcircled{1}（第一类间断点）$f(x_0-0)$与$f(x_0+0)$都存在，但不相等
+
+\textcircled{2}（第二类间断点）$f(x_0-0)$与$f(x_0+0)$至少一个不存在
+\\\\
+\subsubsection{性质}
+连续函数和差积商（分母不为零）连续。
+
+初等函数在定义域内连续。
+\subsubsection{例题}
+
+\section{第二章 一元函数微分学}
+\subsection{定义}
+\subsection{性质}
+\subsection{公式}
+导数公式
+
+$(a^x)'=a^xlna$（a为常数，a>0，a$\neq$1） 
+
+$(log_ax)'=\frac{1}{xlna}(a>0,a\neq 1)$（a>1，a$\neq$1） 
+
+$(tanx)'={sec}^2x$
+
+$(cotx)'=-{csc^2}x$
+
+$(secx)'=secxtanx$
+
+$(cscx)'=-cscxcotx$
+
+$(arcsinx)'=\frac{1}{\sqrt{1-x^2}}$
+
+$(arccosx)'=-\frac{1}{\sqrt{1-x^2}}$
+
+$ $
+
+$ $
+\\\\
+微分公式
+
+$da^x=a^xlnadx$（a为常数，a>0，a$\neq$1）
+$dlog_ax=\frac{1}{xlna}dx(a>0,a\neq 1)$ （a>1，a$\neq$1）
+
+
+
+
+\subsection{例题库}
+
+
+\section{第三章 一元函数积分学}
+\subsection{定义}
+\subsection{性质}
+\subsection{公式}
+(1) $\int x^adx=\frac{1}{a+1}x^{a+1}+C(a\neq-1)$
+
+(2) $\int \frac{1}{x}dx=ln|x|+C$
+
+(3) $\int a^xdx=\frac{a^x}{lna}+C(a>0,a\neq1)$
+
+(4) $\int e^xdx=e^x+C$
+
+(5) $\int sinxdx=-cosx+C$
+
+(6) $\int cosxdx=sinx+C$
+
+(7) $\int tanxdx=-ln|cosx|+C$
+
+(8) $\int cotdx=sinx+C$
+
+(9) $\int secxdx=ln|secx+tanx|+C$
+
+(10)  $\int cscxdx=ln|cscx-cotx|+C$
+
+(11)  $\int sec^2dx=tanx+C$       
+
+(12)  $\int csc^2xdx=-cotx+C$       
+
+(13)  $\int \frac{1}{a^2+x^2}dx=\frac{1}{a}arctan\frac{x}{a}+C$
+
+(14)  $\int \frac{1}{a^2-x^2}dx=\frac{1}{2a}ln|\frac{a+x}{a-x}|+C$
+
+(15)  $\int \frac{1}{\sqrt{a^2-x^2}}dx=arcsin\frac{x}{a}+C$
+
+(16)  $\int \frac{dx}{\sqrt{x^2 \pm a^2}}=ln|x+\sqrt{x^2 \pm a^2}|+C$
+
+\subsection{例题库}
+
+
+\section{第四章 向量代数与空间解析集合}
+\subsection{定义}
+\subsection{性质}
+\subsection{公式}
+\subsection{例题库}
+
+
+\section{第五章 多元函数微分学}
+\subsection{定义}
+\subsection{性质}
+\subsection{公式}
+\subsection{例题库}
+\newpage
+
+
+
+%\end{comment}
+\section{第六章 多元函数积分学}
+
+\subsection{二重积分}
+
+\subsection{三重积分}
+
+\subsection{对弧长的线积分(第一类曲线积分)}
+\subsubsection{定义} 
+设L为XOY面上的分段曲线弧段，$f(x,y)$为定义在L上的有界函数，则f(x,y)在L上对弧长的线积分为\\
+\begin{center}
+$\int_Lf(x,y)ds \overset{\bigtriangleup}{=} \lim\limits_{\lambda \to 0} \sum\limits_{i=1}^n f(\xi _i,\eta _i)\bigtriangleup s_i$,
+\end{center}
+\par
+其中$\bigtriangleup s_i$表示第i段小弧段长度，$\lambda=\max\limits_{1\leq i\leq n} \bigtriangleup s_i$，如果f(x,y)在L上连续，则$\int _L f(x,y)ds$存在。 
+
+\subsubsection{性质}
+性质1 与积分路径方向无关，即
+\begin{center}
+$\int _{L(\widehat{AB})} f(x,y)ds=\int _{L(\widehat{BA})} f(x,y)ds=\int_A^Bf(x,y)ds(A<B)$\\
+\end{center}
+\par
+备注：第一类曲线积分中的ds恒为正数，$ds=\sqrt{x^2+y^2}$，定义中的$\bigtriangleup s$恒为正。在定积分中的dx则是可正可负的。\\\par
+性质2 奇偶性与对称性
+
+\subsubsection{公式}
+公式1 参数方程的计算
+曲线L为参数方程
+$\left\{ 
+	\begin{array}{l}
+	y=y(t),\\
+	x=x(t),
+	\end{array}
+\right. \alpha \leq t \leq \beta$，则\\
+\begin{center}
+$\int _Lf(x,y)ds=\int _\alpha ^beta f(x(t),y(t))\sqrt{x'^2(t)+y'^2(t)}dt$
+\end{center}\par
+公式2 直角坐标的计算
+曲线L为直角坐标方程y=y(x)，$a \leq x \leq b$，则
+\begin{center}
+$\int _L f(x,y)ds = \int _a ^b f(x,y(x))\sqrt{1+y'^2(x)}dx$
+\end{center}\par
+公式3 极坐标的计算
+曲线L为极坐标方程$\rho=\rho (\theta)$，$\alpha \leq \theta \leq \beta$，则
+\begin{center}
+$\int _L f(x,y)ds=\int _\alpha ^\beta f(\rho (\theta) cos\theta , \rho(\theta) sin \theta)\sqrt{\rho^2+\rho'^2}d\rho$
+\end{center}
+
+\begin{comment}
+\subsubsection{例题库}
+例1、计算$\oint _Le^{\sqrt{x^2+y^2}}ds$，其中L为圆$ x^2+y^2=a^2$、直线$y=a$及x轴正方向所围扇形边界。
+\\
+\\
+$\oint_Le^{\sqrt{x^2+y^2}}ds\\
+=\oint_{L1}e^{\sqrt{x^2+y^2}}ds+\oint_{L2}e^{\sqrt{x^2+y^2}}+\oint_{L3}e^{\sqrt{x^2+y^2}}\\
+=\int_0^{\frac{\sqrt{2}}{2}a} e^{\sqrt{2}x}d\sqrt2x + \int_0^\frac{\pi}{4} e^a\sqrt{(-acos\Theta)^2+(asin\Theta)^2}d\Theta+\int_0^a e^{\sqrt{x^2+0}} \sqrt{1+0}dx\\
+=\int_0^{\frac{\sqrt{2}}{2} a}de^{\sqrt{2}x}+\int_0^\frac{\pi}{4}ae^ad\Theta+\int_0^ae^xdx\\
+=e^a-1+\frac{\pi}{4}ae^a+e^a-1\\
+=\frac{\pi}{4} ae^a+2e^a-2$
+
+例2、计算$\_\tau(x^2+y^2+z^2)ds$，其中$\tau$:$x=acost$ $y=asint$ $z=kt$ $(0\leq t\leq2\pi)$
+\\
+\\
+$ds=\sqrt{x'^2+y'^2+z'^2}dt\\
+=\sqrt{(-asint)^2+(acost)^2+k^2}dt\\
+=\sqrt{a^2+k^2}dt$\\\\
+$\int_\tau(x^2+y^2+z^2)ds\\
+=\int_0^{2\pi}(a^2cos^2t+a^2sin^2t+k^2t^2)\sqrt{a^2+k^2}dt\\
+=\int_0^{2\pi} a^2\sqrt{(a^2+k^2)}dt+k^2\sqrt{a^2+k^2}\int_0^{2\pi}t^2dt\\
+=a^2\sqrt{(a^2+k^2)} \int_0^{2\pi} dt *2\pi+k^2\sqrt{a^2+k^2}\frac{(2\pi)^3}{3}\\
+=a^2\sqrt{(a^2+k^2)} *2\pi+\frac{8}{3} \pi^3k^2 \sqrt{a^2+k^2}$
+
+例3、计算$I=\int _L |x|ds$，其中L为双扭线$(x^2+y^2)^2=a^2(x^2-y^2)，a>0$
+\\\\
+$\int _L |x|ds
+=\int _{L_1} |x|ds+\int _{L_2} |x|ds+\int _{L_3} |x|ds+\int _{L_4} |x|ds
+=4\int \{L_1} 
+$
+
+例$\oint_L (x^2+y^2-2x+1)^nds$，其中L为圆周$x^2+y^2-2x=0$；
+$\rho=2cos\theta$
+$\oint_L (x^2+y^2-2x+1)^nds\\
+=\oint ds
+=\int _0^2cos\theta\sqrt{\rho^2+(\rho)'^2}d\theta\\
+=\int $
+\end{comment}
+
+
+
+\subsection{对坐标的线积分(第二类曲线积分)}
+\subsubsection{定义} 
+\subsubsection{公式}
+
+格林公式：
+设闭区域D由光滑的曲线L围成，函数P(x,y)及Q(x,y)在D上具有一阶连续偏导数，则有
+\begin{center}
+$\iint_{D} (\frac{(\partial Q)}{\partial x}-\frac{(\partial P)}{\partial y})dxdy=\oint_L Pdx+Qdy$，
+\end{center}
+其中L是D的取正向的边界曲线。
+\subsubsection{性质}
+
+设P(x,y)，Q(x,y)在单联通区域D上有连续一阶偏导数，则下列四条等价：
+
+１、线积分$\int　Pdx+Qdy$与路径无关
+
+２、$\oint_C Pdx+Qdy=0$，其中C为D中任意分段光滑闭曲线
+
+３、$\frac{\partial Q}{\partial y}=\frac{\partial Q}{\partial x}$，$\exists (x,y) \in D$
+
+４、存在可微函数F(x,y)，使P(x,y)dx+Q(x,y)dy=dF(x,y)
+
+\subsubsection{例题库}
+
+\subsection{对坐标的线积分(第一类曲面积分)}
+\subsubsection{定义}
+设$\sum$为分片光滑曲面片，f(x,y,z)为定义在$\sum$上的有界函数，f(x,y,z)在$\sum$上对面积的面积分为
+\begin{center}
+ $\iint_{\sum} f(x,y,z)dS\stackrel{\bigtriangleup}{} \lim\limits_{\lambda \rightarrow 0} \sum\limits_{i=1}^{n} f(\xi_i ,\eta_i ,\zeta _i)\bigtriangleup S_i$
+\end{center}
+其中$\bigtriangleup S_i$为第i个小曲面块的面积，如果f(x,y,z)在$\sum$上连续，则$\iint\limits_{\sum}f(x,y,z)dS$存在。
+\subsubsection{公式}
+
+
+\subsection{对坐标的线积分(第二类曲面积分)}
+
+\end{document}
