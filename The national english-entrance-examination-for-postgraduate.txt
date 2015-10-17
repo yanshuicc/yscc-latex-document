@@ -117,3 +117,36 @@ As is true of any developed society, in America a complex set of cultural signal
 　　如今，有了很多的慈善组织专门帮助疲惫的旅行者。不过，热情接待陌生人的传统在美国仍然很盛行，尤其是在远离旅游热线的小城镇。我只是路过，和这个美国人聊了聊。很快，他就请我到他家吃饭-这真令人惊奇。来美国的旅客谈论此类事件很普遍，但并非总能得到正确理解。很多美国人不经意表现的友好不应被看做是表面或虚假的应酬，而应该看成是文化传统的历史发展结果。
 　　
 　　同任何发达国家一样，一系列复杂的文化特征，信念和习俗构成了美国所有社会交往的基础。当然，会讲一种语言并不意味着就理解该语言的社会和文化模式。不能正确诠释文化含义的旅行者往往得出错误的结论。例如，美国人所说的朋友一词，其文化含义可能与旅行者语言和文化中的朋友大相径庭。要想正确区分礼貌是出于文化习俗还是个人兴趣，单凭一次公共汽车上的偶遇是不够的。不过，友好是很多美国人推崇的美德，同时希望邻居和陌生人也能如此。
+
+text 3
+Technically, any substance other than food that alters our bodily or mental functioning is a drug. Many people mistakenly believe the term drug refers only to some sort of medicine or an illegal chemical taken by drug addicts. They don't realize that familiar substances such as alcohol and tobacco are also drugs. This is why the more neutral term substance is now used by many physicians and psychologists. The phrase substance abuse is often used instead of drug abuse to make clear that substances such as alcohol and tobacco can be just as harmfully misused as heroin and cocaine.
+　　
+　　We live in a society in which the medicinal and social use of substances (drugs) is pervasive: an aspirin to quiet a headache, some wine to be sociable, coffee to get going in the morning, a cigarette for the nerves. When do these socially acceptable and apparently constructive uses of a substance become misuses? First of all, most substances taken in excess will produce negative effects such as poisoning or intense perceptual distortions. Repeated use of a substance can also lead to physical addiction or substance dependence. Dependence is marked first by an increased tolerance, with more and more of the substance required to produce the desired effect, and then by the appearance of unpleasant withdrawal symptoms when the substance is discontinued.
+　　
+　　Drugs (substances) that affect the central nervous system and alter perception, mood, and behavior are known as psychoactive substances. Psychoactive substances are commonly grouped according to whether they are stimulants, depressants, or hallucinogens. Stimulants initially speed up or activate the central nervous system, whereas depressants slow it down. Hallucinogens have their primary effect on perception, distorting and altering it in a variety of ways including producing hallucinations. These are the substances often called psychedelic (from the Greek word meaning mind-manifestation) because they seemed to radically alter one‘s state of consciousness.
+　　
+59. Substances abuse (line 5, paragraph 1) is preferable to drug abuse in that ________.
+　　(A) substances can alter our bodily or mental functioning if illegally used
+　　(B) drug abuse is only related to a limited number of drugtakers　　
+　　(C) alcohol and tobacco are as fatal as heroin and cocaine　　
+　　(D) many substances other than heroin or cocaine can also be poisonous
+60. The word pervasive (line 1, paragraph 2) might mean ________.
+　　(A) widespread　　(B) overwhelming　　(C) piercing　　(D) fashionable
+61. Physical dependence on certain substances results from ________.
+　　(A) uncontrolled consumption of them over long periods of time
+　　(B) exclusive use of them for social purposes
+　　(C) quantitative application of them to the treatment of diseases
+　　(D) careless employment of them for unpleasant symptoms
+62. From the last paragraph we can infer that ________.
+　　(A) stimulants function positively on the mind
+　　(B) hallucinogens are in themselves harmful to health
+　　(C) depressants are the worst type of psychoactive substances
+　　(D) the three types of psychoactive substances are commonly used in groups
+
+　　从专业角度说，除食品外，任何能改变我们生理和心理机能的物质都是药物。很多人错误地认为药物这个词仅仅指某些药品或是吸毒者服用的违禁化学品。他们没有意识到诸如酒精、烟草这些我们熟悉的物质也是药物。这也是现在许多内科医生和心理学家使用物质这个更加中性的词的原因。他们常用物质滥用而不用药物滥用来清楚表明滥用酒精、烟草这样的物质如同滥用海洛因和可卡因一样有害。
+　　
+　　我们生活在一个物质（药物）在医疗和社交方面的使用都很广泛的社会里：用来缓解头痛的阿斯匹林，用来应酬的酒，早晨用来提神的咖啡，还有定神用的香烟。使用这些物质得到了社会认可，且显然具有积极的作用，但什么时候就变成滥用了呢？首先，大多数物质的过量使用都会产生负面影响，如中毒或严重的感知错乱。反复使用一种物质可以导致成瘾或对该物质的依赖。依赖的最初表现是不断增长的耐药量，要产生预期的效果需要的药剂量越来越大，而一旦中断使用就会出现难受的停药症状。
+　　
+　　影响中枢神经系统、改变感知觉和行为的药物（物质）属于对神经起显著作用的物质，它们通常分为兴奋剂、镇静剂和幻觉剂。兴奋剂主要起到加速或激活中枢神经系统的作用，而镇静剂则相反：减缓它的活动。幻觉剂主要影响人的感知，通过多种方式对感知加以扭曲或改变，其中包括产生幻觉。这些物质常被认为能引起幻觉（psychedelic一词源于希腊语，意为心灵显现），因为它们似乎能改变人的意识状态。
+
+

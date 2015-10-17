@@ -1,0 +1,120 @@
+\documentclass{ctexart}
+\usepackage{verbatim}
+\usepackage{amsmath}
+\usepackage{bm}
+
+%箭头等号等
+\usepackage{extarrows}
+%链接颜色，主要是目录链接
+\usepackage[colorlinks,
+            linkcolor=black,
+            anchorcolor=blue,
+            citecolor=green]{hyperref}
+
+
+\hfuzz=\maxdimen
+\tolerance=10000
+\hbadness=10000
+
+%多栏目录
+\usepackage{multicol}
+\AtBeginDocument{\addtocontents{toc}{\protect\begin{multicols}{2}}}
+\AtEndDocument{\addtocontents{toc}{\protect\end{multicols}}}
+
+\begin{document}
+%\setlength{\parindent}{0pt}
+
+%\begin{comment}
+\tableofcontents
+\newpage
+
+\begin{gather*} 
+%矩阵
+\begin{matrix} 0 & 1  \\ 1 & 0 \end{matrix} \quad 
+%括号矩阵
+\begin{pmatrix}0 & -i \\ i & 0 \end{pmatrix}\\ 
+%中括号矩阵
+\begin{bmatrix}0 & -1 \\ 1 & 0 \end{bmatrix}\quad 
+%大括号矩阵
+\begin{Bmatrix}1 & 0  \\ 0 & -1\end{Bmatrix}\\
+%行列式
+\begin{vmatrix}a & b  \\ c & d \end{vmatrix}\quad 
+%双竖线行列式
+\begin{Vmatrix}i & 0  \\ 0 & -i\end{Vmatrix｝
+
+\begin{array}{cc} 0 & 1 \\ 1 & 0 \end{array} \quad 
+\left(\begin{array}{cc} 0 & -i \\ i & 0 \end{array}\right) \\
+\left[\begin{array}{cc} 0 & -1 \\ 1 & 0 \end{array}\right] \quad 
+\left\{\begin{array}{cc} 1 & 0 \\ 0 & -1 \end{array}\right\} \\ 
+\left|\begin{array}{cc} a & b \\ c & d \end{array}\right| \quad
+\left\|\begin{array}{cc} i & 0 \\ 0 & -i \end{array}\right\|
+
+------------------------------------------------------------------------
+
+\[\left(\begin{array}{cccc} a_{11} & a_{12} & \cdots & a_{1n} \\ &a_{22} & \cdots &a_{2n} \\ & & \ddots & \vdots \\ \multicolumn{2}{c}{\raisebox{1.3ex}[0pt]{\Huge0}} & &a_{nn} \end{array}\right) \] \[\begin{pmatrix} a_{11} & a_{12} & \cdots & a_{1n} \\ &a_{22} & \cdots &a_{2n} \\ & & \ddots & \vdots \\ \multicolumn{2}{c}{\raisebox{1.3ex}[0pt]{\Huge0}} & &a_{nn} \end{pmatrix} \]
+
+
+\[ \begin{array}{c@{\hspace{-5pt}}l} \left(\begin{array}{ccc|ccc} a&\cdots &a &b &\cdots&b\\ &\ddots &\vdots &\vdots &\adots\\ & &a& b \\\hline & & & c &\cdots &c\\ & & & \vdots& &\vdots\\ \multicolumn{3}{c|}{\raisebox{2ex}[0pt]{\Huge0}} & c & \cdots & c \end{array}\right) &\begin{array}{l}\left.\rule{0mm}{7mm}\right\}p\\ \\\left.\rule{0mm}{7mm}\right\}q \end{array}\\[-5pt] \begin{array}{cc}\underbrace{\rule{17mm}{0mm}}_m& \underbrace{\rule{17mm}{0mm}}_m\end{array}& \end{array} \]
+
+\[ \begin{pmatrix} a_{11}&a_{12}&\ldots&a_{1n}\\ a_{21}&a_{22}&\ldots&a_{2n}\\ \hdotsfor{4}\\ a_{n1}&a_{n2}&\ldots&a_{nn}\\ \end{pmatrix} \] 和 \[\begin{pmatrix} a_{11}&a_{12}&\ldots&a_{1n}\\ a_{21}&a_{22}&\ldots&a_{2n}\\ \vdots &\vdots & &\vdots\\ a_{n1}&a_{n2}&\ldots&a_{nn}\\ \end{pmatrix}\]
+
+
+\end{gather*}
+
+\section{行列式}
+
+\subsubection{定义}
+
+行列式
+
+逆序数
+
+余子式
+
+代数余子式
+
+\section{矩阵}
+
+\section{向量}
+ 
+\subsection{向量组的线性相关}
+
+\subsubsection{定义}
+
+
+
+n维向量：数域P上n个数排成一个有序数组[$a_1,a_2,\dots ,a_3$]称为数域P上的n维向量。
+
+线性表出：若$\beta$能表示成$k_1\alpha_1+k_2\alpha_2+\dots +k_m\alpha_m$，则称$\beta$能由$\alpha_1,\alpha_2,\dots,\alpha_m$线性表出。
+
+线性相关：对m个n维向量$\alpha_1,\alpha_2,\dots,\alpha_m$，若存在不全为零的数$k_1,k_2,\dots,k_m$，使得$k_1\alpha_1+k_2\alpha_2+\dots +k_m\alpha_m=\bm{0}$成立，则称向量组$\alpha_1,\alpha_2,\dots,\alpha_m$线性相关。
+
+线性无关：不存在不全为零的数$k_1,k_2,\dots,k_m$，使得$k_1\alpha_1+k_2\alpha_2+\dots +k_m\alpha_m=\bm{0}$。\\
+或对于任意不全为零的数$k_1,k_2,\dots,k_m$，使得$k_1\alpha_1+k_2\alpha_2+\dots +k_m\alpha_m=\bm{0}$，均有$k_1\alpha_1+k_2\alpha_2+\dots +k_m\alpha_m \neq \bm{0}$
+
+\subsection{极大线性无关组、秩}
+
+\subsubsection{定义}
+极大线性无关组：向量组$\alpha_{i1},\alpha_{i2},\dots,\alpha_{ir}(1\leq r \leq s)$是向量组
+
+秩：极大无关组中向量的个数。（A中有一个r阶子式$D_r\neq 0$, 并且所有含$D_r$的r+1阶子式(如果存在的话)$D_{r+1}=0$。）
+
+r(A+B)<=r(A)+r(B)
+
+r(AB)<=min(r(A),r(B))
+
+
+\section{线性方程组}
+
+
+
+\section{特征值、特征向量、相似矩阵}
+
+
+
+\section{二次型}
+
+
+
+
+\end{document}
