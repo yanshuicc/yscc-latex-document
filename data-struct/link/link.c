@@ -11,7 +11,7 @@ typedef struct node
 }Node,* SList;
 
 /*
-	int SL_Creat(SList *p_list,int size)
+	int SL_Create(SList *p_list,int size)
 	参数
 	p_list：指向一个链表指针，此处传入表头地址
 	size：要创建的链表分配的数据元素空间个数，不包含头节点
@@ -20,9 +20,9 @@ typedef struct node
 	功能
 	该函数的功能是创建一个大小为size的链表并把链表的头指针赋给p_lsit所指的链表指针。
 */
-int SL_Creat(SList *p_list,int size)
+int SL_Create(SList *p_list,int size)
 {
-	PNode p=NULL; 
+	PNode p=NULL ; 
 	int i;
 
 	*p_list = (SList)malloc(sizeof(Node));
@@ -40,6 +40,22 @@ int SL_Creat(SList *p_list,int size)
 	}
 	return 1;
 }
+
+/*递归产生链表
+ * */
+int SL_Create1(SList *p,int size)
+{
+	if(size==0)
+		return 1;
+	*p=(SList)malloc(sizeof(Node));
+	if(*p==NULL)
+		return -1;
+	(*p)->item=size;
+	(*p)->next=NULL;
+	if(SL_Create1(&((*p)->next),size-1))
+		return 1;
+}
+
 /*
 	int SL_Insert(SList list,int pos,Item item)
 	参数
@@ -267,6 +283,8 @@ int SL_Clear(SList *p_list)
 	return 1;
 }
 
+
+
 int main()
 {
 	SList sl;
@@ -275,8 +293,34 @@ int main()
 	int pos;
 	Item res;
 
+	printf("\n-------test create1------\n\n"); 
+	SL_Create1(&sl,10);
+	size=SL_Size(sl);
+	printf("size:%d\n",size);
+
+
+	for(i=0;i<size;i++)
+	{
+		SL_GetItem(sl,i,&res); 
+		printf("%d\n",res);
+	}
+
+	printf("\n------- create1 clear------\n\n"); 
+	SL_Clear(&sl);
+	size=SL_Size(sl);
+	printf("size:%d\n",size);
+
+
+	for(i=0;i<size;i++)
+	{
+		SL_GetItem(sl,i,&res); 
+		printf("%d\n",res);
+	}
+	printf("\n");
+
+	printf("\n-------test create------\n\n"); 
 	//××××××××××申请空间10个
-	SL_Creat(&sl,10);
+	SL_Create(&sl,10);
 	size=SL_Size(sl);
 	printf("size:%d\n",size);
 
@@ -340,7 +384,7 @@ int main()
 
 	size=SL_Size(sl);
 	
-	for(i=0;i<size;i++)
+	for(i=1;i<size;i++)
 	{
 		SL_Find(sl,&pos,i); 
 		SL_GetItem(sl,i,&res);
